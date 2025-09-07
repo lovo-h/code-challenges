@@ -1,0 +1,11 @@
+{
+  "name": "septa-fare-calculator",
+  "version": "1.0.0",
+  "description": "Widget that makes it easier to calculate SEPTA rail charges.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lovo-h",
+  "license": "ISC"
+}
