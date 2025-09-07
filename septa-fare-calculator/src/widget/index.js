@@ -1,4 +1,5 @@
 import React from 'react';
+import SEPTALogo from './assets/SEPTA.svg';
 
 import './widget.css';
 
@@ -6,7 +7,7 @@ function Widget() {
   return (
     <div id="widget">
       <div>
-        <div>Icon</div>
+        <img className="logo" src={ SEPTALogo } alt="SEPTA Logo" />
         <div>Regional Rail Fares</div>
       </div>
 
