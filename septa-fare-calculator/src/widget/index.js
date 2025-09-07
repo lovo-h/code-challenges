@@ -6,33 +6,37 @@ import './widget.css';
 function Widget() {
   return (
     <div id="widget">
-      <div>
+      <div className="layout-top-bar">
         <img className="logo" src={ SEPTALogo } alt="SEPTA Logo" />
         <div>Regional Rail Fares</div>
       </div>
 
-      <div>Where are you going?</div>
-      <div>Dropdown: Zone 4</div>
-      <div>Horizontal bar</div>
+      <div className="layout-content">
+        <div className="text-question">Where are you going?</div>
+        <div>Dropdown: Zone 4</div>
+        <div className="divider" />
 
-      <div>When are you riding?</div>
-      <div>Dropdown: Weekdays</div>
-      <div>Helper text</div>
-      <div>Horizontal bar</div>
+        <div className="text-question">When are you riding?</div>
+        <div>Dropdown: Weekdays</div>
+        <div className="text-helper">
+          This is a long helper text in order to test how the text wrapping will work.
+        </div>
+        <div className="divider" />
 
-      <div>Where will you purchase the fare?</div>
-      <div>
-        <div>Radio: Station Kiosk</div>
-        <div>Radio: Onboard</div>
+        <div className="text-question">Where will you purchase the fare?</div>
+        <div>
+          <div>Radio: Station Kiosk</div>
+          <div>Radio: Onboard</div>
+        </div>
+        <div className="divider" />
+
+        <div className="text-question">How many rides will you need?</div>
+        <div>Input: 4</div>
       </div>
-      <div>Horizontal bar</div>
 
-      <div>How many rides will you need?</div>
-      <div>Input: 4</div>
-
-      <div>
+      <div className="layout-bottom-bar">
         <div>Your fare will cost</div>
-        <div>$28.00</div>
+        <div className="text-total-cost">$28.00</div>
       </div>
     </div>
   );
