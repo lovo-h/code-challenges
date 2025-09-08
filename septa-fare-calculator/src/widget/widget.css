@@ -67,5 +67,53 @@
         background-color: #595959;
         color: #FFFFFF;
     }
+
+    .dropdown {
+        appearance:none;
+        -webkit-appearance:none; /* Safari and Chrome */
+        -moz-appearance:none;    /* Firefox */
+        background: url( 'assets/dropdown.svg' ) no-repeat right 0.3rem center/3.0rem;
+
+        min-width: 19.0rem;
+        padding: 1.0rem;
+        border: 2px solid #BFBFBF;
+        border-radius: 0.5rem;
+        font-size: 1.6rem;
+        color: #4D4D4D;
+    }
+
+    .radio-button {
+        margin: 0.5rem 0;
+        color: #4D4D4D;
+
+        input[type="radio"] {
+            /* TODO: Create a custom radio button to allow more styling control. */
+            transform: scale(1.5);
+            margin-right: 1.0rem;
+        }
+    }
+
+    .input-box {
+        margin: 0.5rem 0;
+
+        input {
+            padding: 0.5rem 1.0rem;
+            font-size: 1.6rem;
+            text-align: center;
+            color: #4D4D4D;
+            border-radius: 0.4rem;
+            border: 2px solid #BFBFBF;
+        }
+
+        /* Remove the arrows from number input fields */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance:textfield; /* Firefox */
+        }
+    }
 }
 
