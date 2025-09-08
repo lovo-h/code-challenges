@@ -1,10 +1,81 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SEPTALogo from './assets/SEPTA.svg';
 import { Dropdown, RadioButton, InputBox } from './components';
+import FareService from './services/fares';
+import { dayTypeLabelLookup, purchaseLabelLookup } from './utils/common';
 
 import './widget.css';
 
 function Widget() {
+  let rawFareData = useRef( null );
+  const [ zoneOptions, setZoneOptions ] = useState( [] );
+  const [ dayTypeOptions, setDayTypeOptions ] = useState( [] );
+  const [ purchaseLocationOptions, setPurchaseLocationOptions ] = useState( [] );
+  const [ inputs, setInputs ] = useState( {
+    destinationZone: null,
+    dayType: null,
+    purchaseLocation: null,
+    rideCount: 1,
+  } );
+
+  function setInputsHelper( key, value ) {
+    setInputs( prevInputs => ( {
+      ...prevInputs,
+      [ key ]: value,
+    } ) );
+  }
+
+  function setZone( zoneValue ) {
+    const zoneData = rawFareData.current.zones.find( z => z.zone === zoneValue );
+    const fareData = zoneData ? zoneData.fares : [];
+    const fareOptions = [
+      ...new Set(
+        fareData
+          .filter( fare => fare.type !== 'anytime' )
+          .map( fare => fare.type )
+      ),
+    ];
+    const purchaseOptions = [
+      ...new Set( fareData.map( fare => fare.purchase ) ),
+    ];
+
+    // Set zone options.
+    setZoneOptions( rawFareData.current.zones.map( zone => ( {
+      label: zone.name,
+      value: zone.zone
+    } ) ) );
+
+    // Set day type options.
+    setDayTypeOptions( fareOptions.map( option => ( {
+      label: dayTypeLabelLookup[ option ] || option,
+      value: option
+    } ) ) );
+
+    // Set purchase location options.
+    setPurchaseLocationOptions( purchaseOptions.map( option => ( {
+      label: purchaseLabelLookup[ option ] || option,
+      value: option
+    } ) ) );
+
+    // Reset dependent inputs.
+    setInputs( prevInputs => ( {
+      ...prevInputs,
+      destinationZone: zoneValue,
+      dayType: fareOptions[ 0 ] || null,
+      purchaseLocation: purchaseOptions[ 0 ] || null,
+    } ) );
+  }
+
+  useEffect( () => {
+    // Retrieve fare data from remote.
+    FareService.getFares().then( fareData => {
+      // Store raw fare data for this session.
+      rawFareData.current = fareData;
+
+      setZone( rawFareData.current.zones[ 0 ][ 'zone' ] );
+    } );
+  }, [] );
+
   return (
     <div id="widget">
       <div className="layout-top-bar">
@@ -15,46 +86,47 @@ function Widget() {
       <div className="layout-content">
         <div className="text-question">Where are you going?</div>
         <Dropdown
-          options={ [
-            { label: 'Zone 1', value: '1' },
-            { label: 'Zone 2', value: '2' },
-            { label: 'Zone 3', value: '3' },
-          ] }
+          options={ zoneOptions }
+          value={ inputs.destinationZone }
+          onChange={ ( e ) => setZone( parseInt( e.target.value ) ) }
         />
         <div className="divider" />
 
         <div className="text-question">When are you riding?</div>
         <Dropdown
-          options={ [
-            { label: 'Weekdays', value: '1' },
-            { label: 'Weekends & Evenings', value: '2' },
-          ] }
+          options={ dayTypeOptions }
+          value={ inputs.dayType }
+          onChange={ ( e ) => setInputsHelper( 'dayType', e.target.value ) }
         />
         <div className="text-helper">
-          This is a long helper text in order to test how the text wrapping will work.
+          { rawFareData?.current?.info[ inputs.dayType ] }
         </div>
         <div className="divider" />
 
         <div className="text-question">Where will you purchase the fare?</div>
         <div>
-          <RadioButton
-            label="Station Kiosk"
-            name="purchaseLocation"
-            value="advance_purchase"
-          />
-          <RadioButton
-            label="Onboard"
-            name="purchaseLocation"
-            value="onboard_purchase"
-          />
+          {
+            purchaseLocationOptions.map( ( option ) => (
+              <RadioButton
+                key={ option.value }
+                label={ option.label }
+                name="purchaseLocation"
+                value={ option.value }
+                checked={ inputs.purchaseLocation === option.value }
+                onChange={ ( e ) => setInputsHelper( 'purchaseLocation', e.target.value ) }
+              />
+            ) )
+          }
         </div>
         <div className="divider" />
 
         <div className="text-question">How many rides will you need?</div>
         <InputBox
+          value={ inputs.rideCount }
+          onChange={ ( e ) => setInputsHelper( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) || 1 ) ) ) }
           type="number"
           min="1"
-          max="100"
+          max="99"
         />
       </div>
 
