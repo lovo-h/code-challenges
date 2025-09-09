@@ -18,7 +18,7 @@ function Cost( { result } ) {
   return (
     <>
       <div>Your fare will cost</div>
-      <div className="text-total-cost">
+      <div aria-live="polite" role="status" className="text-total-cost">
         { result ? `${ money( result.totalPrice ) }` : money( 0 ) }
       </div>
       { result.breakdown && (
