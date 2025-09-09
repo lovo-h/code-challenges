@@ -109,6 +109,8 @@ function Widget() {
   useEffect( () => {
     // Retrieve fare data from remote.
     FareService.getFares().then( fareData => {
+      // TODO: Add loading state for slow connections.
+
       // Store raw fare data for this session.
       rawFareData.current = fareData;
 
