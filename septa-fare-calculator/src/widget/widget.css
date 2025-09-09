@@ -14,7 +14,7 @@
     .text-helper {
         font-size: 1.2rem;
         font-weight: 300;
-        color: #9F9F9F;
+        color: #767676;
         text-align: center;
         padding: 1.0rem 0 0 0;
     }
@@ -38,7 +38,7 @@
 
         .logo {
             width: 2.5rem;
-            height: auto;
+            height: 2.0rem;
             margin-right: 1.5rem;
         }
     }
