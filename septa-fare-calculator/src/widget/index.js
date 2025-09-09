@@ -6,6 +6,47 @@ import { dayTypeLabelLookup, purchaseLabelLookup } from './utils/common';
 
 import './widget.css';
 
+
+// Cost component.
+function Cost( { result } ) {
+  const fmt = useMemo( () => new Intl.NumberFormat( undefined, { style: 'currency', currency: 'USD' } ), [] );
+  const money = ( val ) => fmt.format( val );
+  const bulk = result?.breakdown?.bulk;
+  const remainder = result?.breakdown?.remainder;
+  const savings = result?.breakdown?.savings;
+
+  return (
+    <>
+      <div>Your fare will cost</div>
+      <div className="text-total-cost">
+        { result ? `${ money( result.totalPrice ) }` : money( 0 ) }
+      </div>
+      { result.breakdown && (
+        <div className="total-breakdown">
+          <div className="breakdown-title">
+            Fare Breakdown
+          </div>
+          { bulk && (
+            <div className="breakdown-item">
+              { bulk.count } x 10-ticket anytime @ { money( bulk.pricePerRide ) } each = { money( bulk.total ) }
+            </div>
+          ) }
+          { remainder && remainder.count > 0 && (
+            <div className="breakdown-item">
+              { remainder.count } x single tickets @ { money( remainder.pricePerRide ) } each
+              = { money( remainder.total ) }
+            </div>
+          ) }
+          <div className="breakdown-item">
+            You saved { money( savings.total ) } with bulk pricing!
+          </div>
+        </div>
+      ) }
+    </>
+  );
+}
+
+// Main widget component.
 function Widget() {
   let rawFareData = useRef( null );
   const [ zoneOptions, setZoneOptions ] = useState( [] );
@@ -191,34 +232,7 @@ function Widget() {
       </div>
 
       <div className="layout-bottom-bar">
-        <div>Your fare will cost</div>
-        <div className="text-total-cost">
-          { result ? `$${ result.totalPrice.toFixed( 2 ) }` : '$0.00' }
-        </div>
-        { result.breakdown && (
-          <div className="total-breakdown">
-            <div className="breakdown-title">
-              Fare Breakdown
-            </div>
-            { result.breakdown.bulk && (
-              <div className="breakdown-item">
-                { result.breakdown.bulk.count } x 10-ticket anytime @
-                ${ ( result.breakdown.bulk.pricePerRide ).toFixed( 2 ) } each =
-                ${ ( result.breakdown.bulk.total ).toFixed( 2 ) }
-              </div>
-            ) }
-            { result.breakdown.remainder && result.breakdown.remainder.count > 0 && (
-              <div className="breakdown-item">
-                { result.breakdown.remainder.count } x single tickets @
-                ${ ( result.breakdown.remainder.pricePerRide ).toFixed( 2 ) } each =
-                ${ ( result.breakdown.remainder.total ).toFixed( 2 ) }
-              </div>
-            ) }
-            <div className="breakdown-item">
-              You saved ${ result.breakdown.savings.total.toFixed( 2 ) } with bulk pricing!
-            </div>
-          </div>
-        ) }
+        <Cost result={ result } />
       </div>
     </div>
   );
