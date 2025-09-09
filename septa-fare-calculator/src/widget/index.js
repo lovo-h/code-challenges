@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import SEPTALogo from './assets/SEPTA.svg';
-import { Dropdown, RadioButton, InputBox } from './components';
+import { DropdownSelect, RadioSelect, InputBox } from './components';
 import FareService from './services/fares';
 import { dayTypeLabelLookup, purchaseLabelLookup } from './utils/common';
 
@@ -153,44 +153,35 @@ function Widget() {
       </div>
 
       <div className="layout-content">
-        <div className="text-question">Where are you going?</div>
-        <Dropdown
+        <DropdownSelect
+          label="Where are you going?"
           options={ zoneOptions }
           value={ inputs.destinationZone }
           onChange={ ( e ) => handleZoneChange( parseInt( e.target.value ) ) }
         />
         <div className="divider" />
 
-        <div className="text-question">When are you riding?</div>
-        <Dropdown
+        <DropdownSelect
+          label="When are you riding?"
+          helperText={ rawFareData?.current?.info[ inputs.dayType ] }
           options={ dayTypeOptions }
           value={ inputs.dayType }
           onChange={ ( e ) => handleInputsChange( 'dayType', e.target.value ) }
         />
-        <div className="text-helper">
-          { rawFareData?.current?.info[ inputs.dayType ] }
-        </div>
         <div className="divider" />
 
-        <div className="text-question">Where will you purchase the fare?</div>
-        <div>
-          {
-            purchaseLocationOptions.map( ( option ) => (
-              <RadioButton
-                key={ option.value }
-                label={ option.label }
-                name="purchaseLocation"
-                value={ option.value }
-                checked={ inputs.purchaseLocation === option.value }
-                onChange={ ( e ) => handleInputsChange( 'purchaseLocation', e.target.value ) }
-              />
-            ) )
-          }
-        </div>
+        <RadioSelect
+          label="Where will you purchase the fare?"
+          options={ purchaseLocationOptions }
+          name="purchaseLocation"
+          value={ inputs.purchaseLocation }
+          onChange={ ( e ) => handleInputsChange( 'purchaseLocation', e.target.value ) }
+        />
         <div className="divider" />
 
-        <div className="text-question">How many rides will you need?</div>
+        {/* TODO: Confirm whether there should be a max limit of 99. */}
         <InputBox
+          label="How many rides will you need?"
           value={ inputs.rideCount }
           onChange={ ( e ) => handleInputsChange( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
           type="number"

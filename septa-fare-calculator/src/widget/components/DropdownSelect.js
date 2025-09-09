@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { dayTypeLabelLookup } from '../utils/common';
 
-function DropDown( { options, value, onChange } ) {
+function DropDownSelect( { label, options, value, helperText, onChange } ) {
   const spanRef = useRef();
   const [ width, setWidth ] = React.useState( 'auto' );
   useEffect( () => {
@@ -29,6 +29,7 @@ function DropDown( { options, value, onChange } ) {
 
   return (
     <>
+      <div className="text-question">{ label }</div>
       <select className="dropdown" style={ { width } } value={ value } onChange={ onChange }>
         { options.map( ( option ) => (
           <option key={ option.value } value={ option.value }>
@@ -36,6 +37,7 @@ function DropDown( { options, value, onChange } ) {
           </option>
         ) ) }
       </select>
+      { helperText && <div className="text-helper">{ helperText }</div> }
       <span ref={ spanRef } style={ spanStyle }>
         { dayTypeLabelLookup[ value ] || value }
       </span>
@@ -43,4 +45,4 @@ function DropDown( { options, value, onChange } ) {
   );
 }
 
-export default DropDown;
+export default DropDownSelect;
