@@ -28,12 +28,12 @@ function Cost( { result } ) {
           </div>
           { bulk && (
             <div className="breakdown-item">
-              { bulk.count } x 10-ticket anytime @ { money( bulk.pricePerRide ) } each = { money( bulk.total ) }
+              { bulk.count } x 10-ticket anytime @ { money( bulk.price ) } each = { money( bulk.total ) }
             </div>
           ) }
           { single && single.count > 0 && (
             <div className="breakdown-item">
-              { single.count } x single tickets @ { money( single.pricePerRide ) } each = { money( single.total ) }
+              { single.count } x single tickets @ { money( single.price ) } each = { money( single.total ) }
             </div>
           ) }
           <div className="breakdown-item">
@@ -163,12 +163,12 @@ function Widget() {
             breakdown: {
               bulk: {
                 count: bulkCount,
-                pricePerRide: bulkFare ? bulkFare.price : 0,
+                price: bulkFare ? bulkFare.price : 0,
                 total: bulkTotalPrice
               },
               single: {
                 count: singleCount,
-                pricePerRide: fare.price,
+                price: fare.price,
                 total: singleTotalPrice,
               },
               savings: {
