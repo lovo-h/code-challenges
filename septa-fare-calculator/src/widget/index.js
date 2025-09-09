@@ -49,6 +49,7 @@ function Cost( { result } ) {
 // Main widget component.
 function Widget() {
   let rawFareData = useRef( null );
+  const [ loadState, setLoadState ] = useState( 'loading' ); // 'loading', 'error', 'loaded'
   const [ zoneOptions, setZoneOptions ] = useState( [] );
   const [ dayTypeOptions, setDayTypeOptions ] = useState( [] );
   const [ purchaseLocationOptions, setPurchaseLocationOptions ] = useState( [] );
@@ -108,15 +109,19 @@ function Widget() {
   }
 
   useEffect( () => {
+    setLoadState( 'loading' );
     // Retrieve fare data from remote.
-    FareService.getFares().then( fareData => {
-      // TODO: Add loading state for slow connections.
+    FareService.getFares()
+      .then( fareData => {
+        // Store raw fare data for this session.
+        rawFareData.current = fareData;
 
-      // Store raw fare data for this session.
-      rawFareData.current = fareData;
-
-      handleZoneChange( rawFareData.current.zones[ 0 ][ 'zone' ] );
-    } );
+        handleZoneChange( rawFareData.current.zones[ 0 ][ 'zone' ] );
+        setLoadState( 'loaded' );
+      } )
+      .catch( error => {
+        setLoadState( 'error' );
+      } );
   }, [] );
 
   // Recalculate the result any time the inputs change.
@@ -199,44 +204,58 @@ function Widget() {
       </header>
 
       <main className="layout-content">
-        <DropdownSelect
-          id="destinationZone"
-          label="Where are you going?"
-          options={ zoneOptions }
-          value={ inputs.destinationZone }
-          onChange={ ( e ) => handleZoneChange( parseInt( e.target.value ) ) }
-        />
-        <div className="divider" />
+        {/* TODO: Request designs for these load states. */}
+        { loadState === 'loading' && (
+          <div>Loading...</div>
+        ) }
+        { loadState === 'error' && (
+          <div>Error loading fare data. Please try again later.</div>
+        ) }
+        { loadState === 'loaded' && zoneOptions.length === 0 && (
+          <div>No fare data available.</div>
+        ) }
+        { loadState === 'loaded' && zoneOptions.length > 0 && (
+          <>
+            <DropdownSelect
+              id="destinationZone"
+              label="Where are you going?"
+              options={ zoneOptions }
+              value={ inputs.destinationZone }
+              onChange={ ( e ) => handleZoneChange( parseInt( e.target.value ) ) }
+            />
+            <div className="divider" />
 
-        <DropdownSelect
-          id="dayType"
-          label="When are you riding?"
-          helperText={ rawFareData?.current?.info[ inputs.dayType ] }
-          options={ dayTypeOptions }
-          value={ inputs.dayType }
-          onChange={ ( e ) => handleInputsChange( 'dayType', e.target.value ) }
-        />
-        <div className="divider" />
+            <DropdownSelect
+              id="dayType"
+              label="When are you riding?"
+              helperText={ rawFareData?.current?.info[ inputs.dayType ] }
+              options={ dayTypeOptions }
+              value={ inputs.dayType }
+              onChange={ ( e ) => handleInputsChange( 'dayType', e.target.value ) }
+            />
+            <div className="divider" />
 
-        <RadioSelect
-          label="Where will you purchase the fare?"
-          options={ purchaseLocationOptions }
-          name="purchaseLocation"
-          value={ inputs.purchaseLocation }
-          onChange={ ( e ) => handleInputsChange( 'purchaseLocation', e.target.value ) }
-        />
-        <div className="divider" />
+            <RadioSelect
+              label="Where will you purchase the fare?"
+              options={ purchaseLocationOptions }
+              name="purchaseLocation"
+              value={ inputs.purchaseLocation }
+              onChange={ ( e ) => handleInputsChange( 'purchaseLocation', e.target.value ) }
+            />
+            <div className="divider" />
 
-        {/* TODO: Confirm whether there should be a max limit of 99. */}
-        <InputBox
-          id="rideCount"
-          label="How many rides will you need?"
-          value={ inputs.rideCount }
-          onChange={ ( e ) => handleInputsChange( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
-          type="number"
-          min="1"
-          max="99"
-        />
+            {/* TODO: Confirm whether there should be a max limit of 99. */ }
+            <InputBox
+              id="rideCount"
+              label="How many rides will you need?"
+              value={ inputs.rideCount }
+              onChange={ ( e ) => handleInputsChange( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
+              type="number"
+              min="1"
+              max="99"
+            />
+          </>
+        ) }
       </main>
 
       <footer className="layout-bottom-bar">
