@@ -25,7 +25,7 @@ function Widget() {
     } ) );
   }
 
-  function setZone( zoneValue ) {
+  function handleZoneChange( zoneValue ) {
     const zoneData = rawFareData.current.zones.find( z => z.zone === zoneValue );
     const fareData = zoneData ? zoneData.fares : [];
     const fareOptions = [
@@ -72,7 +72,7 @@ function Widget() {
       // Store raw fare data for this session.
       rawFareData.current = fareData;
 
-      setZone( rawFareData.current.zones[ 0 ][ 'zone' ] );
+      handleZoneChange( rawFareData.current.zones[ 0 ][ 'zone' ] );
     } );
   }, [] );
 
@@ -157,7 +157,7 @@ function Widget() {
         <Dropdown
           options={ zoneOptions }
           value={ inputs.destinationZone }
-          onChange={ ( e ) => setZone( parseInt( e.target.value ) ) }
+          onChange={ ( e ) => handleZoneChange( parseInt( e.target.value ) ) }
         />
         <div className="divider" />
 
@@ -192,7 +192,7 @@ function Widget() {
         <div className="text-question">How many rides will you need?</div>
         <InputBox
           value={ inputs.rideCount }
-          onChange={ ( e ) => setInputsHelper( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) || 1 ) ) ) }
+          onChange={ ( e ) => setInputsHelper( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
           type="number"
           min="1"
           max="99"
