@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import SEPTALogo from './assets/SEPTA.svg';
 import { Dropdown, RadioButton, InputBox } from './components';
 import FareService from './services/fares';
@@ -76,6 +76,75 @@ function Widget() {
     } );
   }, [] );
 
+  // Recalculate the result any time the inputs change.
+  const result = useMemo( () => {
+    const { destinationZone, dayType, purchaseLocation, rideCount } = inputs;
+    // Validate inputs.
+    if ( ! rawFareData.current || ! destinationZone || ! dayType || ! purchaseLocation || ! rideCount ) {
+      return { totalPrice: 0 };
+    }
+
+    const zone = rawFareData.current.zones.find( zone => zone.zone === destinationZone );
+    if ( ! zone ) {
+      return { totalPrice: 0 };
+    }
+
+    const fare = zone.fares.find( fare =>
+      fare.type === dayType && fare.purchase === purchaseLocation
+    );
+    if ( ! fare ) {
+      return { totalPrice: 0 };
+    }
+
+    /*
+    * TODO: This shouldn't be hardcoded.
+    *    This logic assumes that if a bulk discount is available, it will be
+    *    for 10 rides at a time. It also assumes that the bulk discount is
+    *    only available for advance_purchase fares.
+    * */
+    if ( purchaseLocation === 'advance_purchase' && rideCount >= 10 ) {
+      const bulkFare = zone.fares.find( fare =>
+        fare.purchase === 'advance_purchase' && fare.trips === 10
+      );
+
+      // Ensure bulk fare exists before using it.
+      if ( bulkFare ) {
+        const bulkCount = Math.floor( rideCount / 10 );
+        const bulkTotalPrice = bulkFare.price * bulkCount;
+        const remainderCount = rideCount % 10;
+        const remainderTotalPrice = fare.price * remainderCount;
+        const totalPrice = bulkTotalPrice + remainderTotalPrice;
+
+        const isBulkCheaper = totalPrice < fare.price * rideCount;
+        if ( isBulkCheaper ) {
+          return {
+            totalPrice,
+            breakdown: {
+              bulk: {
+                count: bulkCount,
+                pricePerRide: bulkFare ? bulkFare.price : 0,
+                total: bulkTotalPrice
+              },
+              remainder: {
+                count: remainderCount,
+                pricePerRide: fare.price,
+                total: remainderTotalPrice,
+              },
+              savings: {
+                total: ( ( bulkCount * 10 * fare.price ) + ( remainderCount * fare.price ) - totalPrice )
+              },
+            }
+          };
+        }
+      }
+    }
+
+    // Default return if no bulk discount applied.
+    return {
+      totalPrice: fare.price * rideCount
+    };
+  }, [ inputs ] );
+
   return (
     <div id="widget">
       <div className="layout-top-bar">
@@ -132,7 +201,33 @@ function Widget() {
 
       <div className="layout-bottom-bar">
         <div>Your fare will cost</div>
-        <div className="text-total-cost">$28.00</div>
+        <div className="text-total-cost">
+          { result ? `$${ result.totalPrice.toFixed( 2 ) }` : '$0.00' }
+        </div>
+        { result.breakdown && (
+          <div className="total-breakdown">
+            <div className="breakdown-title">
+              Fare Breakdown
+            </div>
+            { result.breakdown.bulk && (
+              <div className="breakdown-item">
+                { result.breakdown.bulk.count } x 10-ticket anytime @
+                ${ ( result.breakdown.bulk.pricePerRide ).toFixed( 2 ) } each =
+                ${ ( result.breakdown.bulk.total ).toFixed( 2 ) }
+              </div>
+            ) }
+            { result.breakdown.remainder && result.breakdown.remainder.count > 0 && (
+              <div className="breakdown-item">
+                { result.breakdown.remainder.count } x single tickets @
+                ${ ( result.breakdown.remainder.pricePerRide ).toFixed( 2 ) } each =
+                ${ ( result.breakdown.remainder.total ).toFixed( 2 ) }
+              </div>
+            ) }
+            <div className="breakdown-item">
+              You saved ${ result.breakdown.savings.total.toFixed( 2 ) } with bulk pricing!
+            </div>
+          </div>
+        ) }
       </div>
     </div>
   );

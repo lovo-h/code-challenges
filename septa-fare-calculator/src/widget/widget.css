@@ -55,6 +55,21 @@
             font-weight: 500;
             margin: 1.0rem 0;
         }
+
+        .total-breakdown {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .breakdown-title {
+                margin: 0.5rem 0;
+            }
+
+            .breakdown-item {
+                font-size: 1.0rem;
+                margin: 0.3rem 0;
+            }
+        }
     }
 
     .layout-content, .layout-bottom-bar {
