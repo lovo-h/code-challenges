@@ -21,6 +21,7 @@ function Cost( { result } ) {
       <div aria-live="polite" role="status" className="text-total-cost">
         { result ? `${ money( result.totalPrice ) }` : money( 0 ) }
       </div>
+      {/* TODO: Confirm breakdown UI/UX with the design team. */}
       { result.breakdown && (
         <div className="total-breakdown">
           <div className="breakdown-title">
