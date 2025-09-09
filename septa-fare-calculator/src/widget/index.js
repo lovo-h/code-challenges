@@ -25,7 +25,7 @@ function Cost( { result } ) {
       { result.breakdown && (
         <div className="total-breakdown">
           <div className="breakdown-title">
-            Fare Breakdown
+            Fare breakdown
           </div>
           { bulk && (
             <div className="breakdown-item">
