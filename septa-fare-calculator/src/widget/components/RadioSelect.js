@@ -1,44 +1,31 @@
 import React from 'react';
 
-function RadioButton( { label, name, value, checked, onChange } ) {
-  return (
-    <div className="radio-button">
-      <label>
-        <input
-          type="radio"
-          name={ name }
-          value={ value }
-          checked={ checked }
-          onChange={ onChange }
-        />
-        <span className="radio-button-label">
-          { label }
-        </span>
-      </label>
-    </div>
-  );
-}
-
-function RadioSelect( { label, options, name, value, onChange  } ) {
+function RadioSelect( { label, options, name, value, onChange } ) {
 
   return (
-    <>
-      <div className="text-question">{ label }</div>
+    <fieldset className="radio-select">
+      <legend className="text-question">{ label }</legend>
       <div>
         {
           options.map( ( option ) => (
-            <RadioButton
-              key={ option.value }
-              label={ option.label }
-              name={ name }
-              value={ option.value }
-              checked={ value === option.value }
-              onChange={ ( e ) => onChange( e ) }
-            />
+            <div key={ option.value } className="radio-button">
+              <input
+                id={ option.value }
+                type="radio"
+                name={ name }
+                value={ option.value }
+                checked={ value === option.value }
+                onChange={ onChange }
+              />
+              {/* TODO: Use different value for id and htmlFor if needed. */}
+              <label htmlFor={ option.value } className="radio-button-label">
+                { option.label }
+              </label>
+            </div>
           ) )
         }
       </div>
-    </>
+    </fieldset>
   );
 }
 

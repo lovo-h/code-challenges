@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { dayTypeLabelLookup } from '../utils/common';
 
-function DropDownSelect( { label, options, value, helperText, onChange } ) {
+function DropDownSelect( { id, label, options, value, helperText, onChange } ) {
   const spanRef = useRef();
   const [ width, setWidth ] = React.useState( 'auto' );
   useEffect( () => {
@@ -17,7 +17,6 @@ function DropDownSelect( { label, options, value, helperText, onChange } ) {
     return null;
   }
 
-
   const spanStyle = {
     // TODO: fontSize should not be hardcoded but derived from CSS.
     fontSize: '1.6rem',
@@ -29,8 +28,8 @@ function DropDownSelect( { label, options, value, helperText, onChange } ) {
 
   return (
     <>
-      <div className="text-question">{ label }</div>
-      <select className="dropdown" style={ { width } } value={ value } onChange={ onChange }>
+      <label htmlFor={ id } className="text-question">{ label }</label>
+      <select id={ id } className="dropdown" style={ { width } } value={ value } onChange={ onChange }>
         { options.map( ( option ) => (
           <option key={ option.value } value={ option.value }>
             { option.label }

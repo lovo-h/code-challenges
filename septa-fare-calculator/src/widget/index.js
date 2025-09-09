@@ -188,13 +188,14 @@ function Widget() {
 
   return (
     <div id="widget">
-      <div className="layout-top-bar">
+      <header className="layout-top-bar">
         <img className="logo" src={ SEPTALogo } alt="SEPTA Logo" />
-        <div>Regional Rail Fares</div>
-      </div>
+        <h1>Regional Rail Fares</h1>
+      </header>
 
-      <div className="layout-content">
+      <main className="layout-content">
         <DropdownSelect
+          id="destinationZone"
           label="Where are you going?"
           options={ zoneOptions }
           value={ inputs.destinationZone }
@@ -203,6 +204,7 @@ function Widget() {
         <div className="divider" />
 
         <DropdownSelect
+          id="dayType"
           label="When are you riding?"
           helperText={ rawFareData?.current?.info[ inputs.dayType ] }
           options={ dayTypeOptions }
@@ -222,6 +224,7 @@ function Widget() {
 
         {/* TODO: Confirm whether there should be a max limit of 99. */}
         <InputBox
+          id="rideCount"
           label="How many rides will you need?"
           value={ inputs.rideCount }
           onChange={ ( e ) => handleInputsChange( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
@@ -229,11 +232,11 @@ function Widget() {
           min="1"
           max="99"
         />
-      </div>
+      </main>
 
-      <div className="layout-bottom-bar">
+      <footer className="layout-bottom-bar">
         <Cost result={ result } />
-      </div>
+      </footer>
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 
-function InputBox( { label, value, onChange, type = 'text', placeholder = '', ...rest } ) {
+function InputBox( { id, label, value, onChange, type = 'text', placeholder = '', ...rest } ) {
   return (
     <>
-      <div className="text-question">{ label }</div>
+      <label htmlFor={ id } className="text-question">{ label }</label>
       <div className="input-box">
         <input
+          id={ id }
           type={ type }
           value={ value || '' }
           onChange={ onChange }
