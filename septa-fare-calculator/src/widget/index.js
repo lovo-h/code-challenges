@@ -128,11 +128,13 @@ function Widget() {
       return { totalPrice: 0 };
     }
 
+    // Find the zone that matches the selected destination.
     const zone = rawFareData.current.zones.find( zone => zone.zone === destinationZone );
     if ( ! zone ) {
       return { totalPrice: 0 };
     }
 
+    // Find the fare that matches the selected criteria.
     const fare = zone.fares.find( fare =>
       fare.type === dayType && fare.purchase === purchaseLocation
     );
