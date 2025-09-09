@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { dayTypeLabelLookup } from '../utils/common';
 
 function DropDownSelect( { id, label, options, value, helperText, onChange } ) {
+  const helpId = useId();
   const spanRef = useRef();
   const [ width, setWidth ] = React.useState( 'auto' );
   useEffect( () => {
@@ -29,14 +30,20 @@ function DropDownSelect( { id, label, options, value, helperText, onChange } ) {
   return (
     <>
       <label htmlFor={ id } className="text-question">{ label }</label>
-      <select id={ id } className="dropdown" style={ { width } } value={ value } onChange={ onChange }>
+      <select
+        id={ id }
+        className="dropdown"
+        style={ { width } }
+        value={ value }
+        aria-describedby={helpId}
+        onChange={ onChange }>
         { options.map( ( option ) => (
           <option key={ option.value } value={ option.value }>
             { option.label }
           </option>
         ) ) }
       </select>
-      { helperText && <div className="text-helper">{ helperText }</div> }
+      { helperText && <div id={helpId} className="text-helper">{ helperText }</div> }
       <span ref={ spanRef } style={ spanStyle }>
         { dayTypeLabelLookup[ value ] || value }
       </span>
