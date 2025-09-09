@@ -18,7 +18,7 @@ function Widget() {
     rideCount: 1,
   } );
 
-  function setInputsHelper( key, value ) {
+  function handleInputsChange( key, value ) {
     setInputs( prevInputs => ( {
       ...prevInputs,
       [ key ]: value,
@@ -165,7 +165,7 @@ function Widget() {
         <Dropdown
           options={ dayTypeOptions }
           value={ inputs.dayType }
-          onChange={ ( e ) => setInputsHelper( 'dayType', e.target.value ) }
+          onChange={ ( e ) => handleInputsChange( 'dayType', e.target.value ) }
         />
         <div className="text-helper">
           { rawFareData?.current?.info[ inputs.dayType ] }
@@ -182,7 +182,7 @@ function Widget() {
                 name="purchaseLocation"
                 value={ option.value }
                 checked={ inputs.purchaseLocation === option.value }
-                onChange={ ( e ) => setInputsHelper( 'purchaseLocation', e.target.value ) }
+                onChange={ ( e ) => handleInputsChange( 'purchaseLocation', e.target.value ) }
               />
             ) )
           }
@@ -192,7 +192,7 @@ function Widget() {
         <div className="text-question">How many rides will you need?</div>
         <InputBox
           value={ inputs.rideCount }
-          onChange={ ( e ) => setInputsHelper( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
+          onChange={ ( e ) => handleInputsChange( 'rideCount', Math.max( 1, Math.min( 99, parseInt( e.target.value ) ) ) ) }
           type="number"
           min="1"
           max="99"
