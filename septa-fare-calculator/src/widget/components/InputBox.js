@@ -5,7 +5,7 @@ function InputBox( { value, onChange, type = 'text', placeholder = '', ...rest }
     <div className="input-box">
       <input
         type={ type }
-        value={ value }
+        value={ value || '' }
         onChange={ onChange }
         placeholder={ placeholder }
         { ...rest }
