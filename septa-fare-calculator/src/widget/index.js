@@ -12,7 +12,7 @@ function Cost( { result } ) {
   const fmt = useMemo( () => new Intl.NumberFormat( undefined, { style: 'currency', currency: 'USD' } ), [] );
   const money = ( val ) => fmt.format( val );
   const bulk = result?.breakdown?.bulk;
-  const remainder = result?.breakdown?.remainder;
+  const single = result?.breakdown?.single;
   const savings = result?.breakdown?.savings;
 
   return (
@@ -31,10 +31,9 @@ function Cost( { result } ) {
               { bulk.count } x 10-ticket anytime @ { money( bulk.pricePerRide ) } each = { money( bulk.total ) }
             </div>
           ) }
-          { remainder && remainder.count > 0 && (
+          { single && single.count > 0 && (
             <div className="breakdown-item">
-              { remainder.count } x single tickets @ { money( remainder.pricePerRide ) } each
-              = { money( remainder.total ) }
+              { single.count } x single tickets @ { money( single.pricePerRide ) } each = { money( single.total ) }
             </div>
           ) }
           <div className="breakdown-item">
@@ -153,9 +152,9 @@ function Widget() {
       if ( bulkFare ) {
         const bulkCount = Math.floor( rideCount / 10 );
         const bulkTotalPrice = bulkFare.price * bulkCount;
-        const remainderCount = rideCount % 10;
-        const remainderTotalPrice = fare.price * remainderCount;
-        const totalPrice = bulkTotalPrice + remainderTotalPrice;
+        const singleCount = rideCount % 10;
+        const singleTotalPrice = fare.price * singleCount;
+        const totalPrice = bulkTotalPrice + singleTotalPrice;
 
         const isBulkCheaper = totalPrice < fare.price * rideCount;
         if ( isBulkCheaper ) {
@@ -167,13 +166,13 @@ function Widget() {
                 pricePerRide: bulkFare ? bulkFare.price : 0,
                 total: bulkTotalPrice
               },
-              remainder: {
-                count: remainderCount,
+              single: {
+                count: singleCount,
                 pricePerRide: fare.price,
-                total: remainderTotalPrice,
+                total: singleTotalPrice,
               },
               savings: {
-                total: ( ( bulkCount * 10 * fare.price ) + ( remainderCount * fare.price ) - totalPrice )
+                total: ( ( bulkCount * 10 * fare.price ) + ( singleCount * fare.price ) - totalPrice )
               },
             }
           };
