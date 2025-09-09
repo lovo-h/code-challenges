@@ -119,6 +119,7 @@ function Widget() {
 
   // Recalculate the result any time the inputs change.
   const result = useMemo( () => {
+    // TODO: Need unit tests for this function's logic.
     const { destinationZone, dayType, purchaseLocation, rideCount } = inputs;
     // Validate inputs.
     if ( ! rawFareData.current || ! destinationZone || ! dayType || ! purchaseLocation || ! rideCount ) {
